@@ -11,12 +11,22 @@ html(lang="en")
         header 
             h1 Home
         main
-            form#nickname
-                input(type='text', placeholder='choose a nickname')
-                button Save
-            ul
-            form#message
-                input(type='text', placeholder='write a message' reuired)
-            button Send  
+            div#welcome
+                form 
+                    input(placeholder="romm name" required type='text')
+                    button Enter Room
+            div#nickname
+                form 
+                    input(placeholder="nickname" required type='text')
+                    button Submit
+                    
+            div#room        
+                h3 
+                ul
+                small
+                form 
+                    input(placeholder="message" required type='text')
+                    button Send
+        script(src="http://localhost:3000/socket.io/socket.io.js")
         script(src='/public/front/app.js')
         
