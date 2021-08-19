@@ -4,12 +4,15 @@ const form = welcome.querySelector("form");
 const room = document.getElementById("room");
 const nickname = document.getElementById("nickname");
 const small = room.querySelector("small");
+const online = document.getElementById("online");
+
 room.hidden = true;
 welcome.hidden = true;
 
 let roomName;
 let typing = false;
 let timeout = undefined;
+let userNickname;
 
 function timeoutHandler() {
   typing = false;
@@ -26,6 +29,13 @@ function onkeyDown(e, roomName) {
     clearTimeout(timeout);
     timeout = setTimeout(timeoutHandler, 1000);
   }
+}
+
+function addOnline(msg) {
+  const ul = online.querySelector("ul");
+  const li = document.createElement("li");
+  li.textContent = msg;
+  ul.appendChild(li);
 }
 
 function addMessage(message) {
@@ -54,9 +64,9 @@ function handleRoomSubmit(event) {
   event.preventDefault();
   const input = form.querySelector("input");
   socket.emit("enter_room", input.value, showMessage);
+  socket.emit("online", input.value, userNickname);
   roomName = input.value;
   input.value = "";
-  small.textContent = "";
 }
 
 function handleMessageSubmit(event) {
@@ -74,8 +84,8 @@ room.addEventListener("keyup", (e) => onkeyDown(e, roomName));
 function handleNicknameSubmit(e) {
   e.preventDefault();
   const input = nickname.querySelector("input");
-  const value = input.value;
-  socket.emit("set_nickname", value);
+  userNickname = input.value;
+  socket.emit("set_nickname", userNickname);
   input.value = "";
   nickname.hidden = true;
   welcome.hidden = false;
@@ -84,12 +94,12 @@ function handleNicknameSubmit(e) {
 nickname.addEventListener("submit", handleNicknameSubmit);
 welcome.addEventListener("submit", handleRoomSubmit);
 
-socket.on("welcome", () => {
-  addMessage("someone joined!");
+socket.on("welcome", (nick) => {
+  addMessage(`${nick} joined`);
 });
 
-socket.on("bye", () => {
-  addMessage("someone left ㅠㅠ");
+socket.on("bye", (nick) => {
+  addMessage(`${nick} left`);
 });
 
 function typingmessage(msg) {

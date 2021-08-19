@@ -9,8 +9,12 @@ app.get("/", (_, res) => res.render("home"));
 app.get("/*", (_, res) => res.redirect("/"));
 const httpServer = http.createServer(app);
 const wsServer = SocketIO(httpServer);
+let users = new Map();
 
 wsServer.on("connection", (socket) => {
+  let userName = socket.handshake.query.userName;
+  console.log(userName);
+
   socket.onAny((event) => {
     console.log(`Socket Event: ${event}`);
   });
